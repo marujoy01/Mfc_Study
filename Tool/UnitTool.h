@@ -26,6 +26,7 @@ public:
 	afx_msg void OnListBox();
 	afx_msg void OnCreateUnit();
 	
+
 public:
 	// 아무 의미 없는 변수
 	CString m_strTemp;
@@ -36,8 +37,14 @@ public:
 
 public:
 	CListBox m_ListBox;
+	CButton m_Radio[3];
+	CButton m_Check[3];
+	CButton m_Bitmap;
 
 public:
 	map<CString, UNITDATA*>		m_mapUnitData;
 
+	virtual BOOL OnInitDialog();
 };
+
+// 저장하기, 불러오기, 삭제하기, 탐색하기(edit control 이용하여 탐색)

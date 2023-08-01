@@ -19,8 +19,6 @@
 
 
 
-
-
 #define ERR_MSG(message)								\
 ::MessageBox(nullptr, message, L"error", MB_OK)
 

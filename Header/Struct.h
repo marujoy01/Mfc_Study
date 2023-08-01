@@ -40,8 +40,8 @@ typedef	struct tagUnitData
 	CString	strName;	
 	int		iAttack;
 	int		iHp;
-	//BYTE	byJobIndex;
-	//BYTE	byItem;
+	BYTE	byJobIndex;
+	BYTE	byItem;
 
 }UNITDATA;
 

@@ -2,6 +2,7 @@
 
 
 #include "UnitTool.h"
+#include "MapTool.h"
 // CMyForm Æû ºäÀÔ´Ï´Ù.
 
 class CMyForm : public CFormView
@@ -36,6 +37,8 @@ public:
 public:
 	CFont		m_Font;
 	CUnitTool	m_UnitTool;
+	CMapTool	m_MapTool;
+	afx_msg void OnMapTool();
 };
 
 
