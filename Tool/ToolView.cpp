@@ -102,9 +102,6 @@ CToolDoc* CToolView::GetDocument() const // 디버그되지 않은 버전은 인라인으로 지
 
 void CToolView::OnInitialUpdate()
 {
-
-
-
 	SetScrollSizes(MM_TEXT, CSize(TILEX * TILECX, TILEY * TILECY / 2));
 
 	// AfxGetMainWnd : 현재 메인 윈도우를 반환하는 전역 함수
@@ -188,8 +185,14 @@ void CToolView::OnLButtonDown(UINT nFlags, CPoint point)
 	// TRUE : WM_PAINT, WM_ERASEBKGND 메세지를 둘 다 발생
 
 	Invalidate(FALSE);
-}
 
+	CMainFrame*		pMainFrm = dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd());
+	CMiniView*		pMiniView = dynamic_cast<CMiniView*>(pMainFrm->m_SecondSplitter.GetPane(0, 0));
+
+	pMiniView->Invalidate(FALSE);
+
+
+}
 
 void CToolView::OnMouseMove(UINT nFlags, CPoint point)
 {
@@ -199,6 +202,12 @@ void CToolView::OnMouseMove(UINT nFlags, CPoint point)
 	{
 		m_pTerrain->Tile_Change(D3DXVECTOR3((float)point.x + GetScrollPos(0),
 			(float)point.y + GetScrollPos(1), 0.f), 0);
+
 		Invalidate(FALSE);
+
+		CMainFrame*		pMainFrm = dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd());
+		CMiniView*		pMiniView = dynamic_cast<CMiniView*>(pMainFrm->m_SecondSplitter.GetPane(0, 0));
+
+		pMiniView->Invalidate(FALSE);
 	}
 }

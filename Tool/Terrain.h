@@ -13,10 +13,12 @@ public:
 	void		Initialize();
 	void		Update();
 	void		Render();
+	void		Mini_Render();
 	void		Release();
 
 public:
 	void		Set_MainView(CToolView* pView) { m_pMainView = pView;  }
+	void		Set_Ratio(D3DXMATRIX* pOut, float fRatioX, float fRatioY);
 
 public:
 	void		Tile_Change(const D3DXVECTOR3& vPos, const BYTE& byDrawID);

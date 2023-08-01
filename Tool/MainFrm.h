@@ -4,6 +4,10 @@
 
 #pragma once
 
+#include "Include.h"
+#include "MyForm.h"
+#include "MiniView.h"
+
 class CMainFrame : public CFrameWnd
 {
 	
@@ -38,6 +42,12 @@ protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	DECLARE_MESSAGE_MAP()
 
+	virtual BOOL OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext);
+
+public:
+	// CSplitterWnd :  창 분할 기능을 담당하는 클래스
+	CSplitterWnd				m_MainSplitter;
+	CSplitterWnd				m_SecondSplitter;
 };
 
 
