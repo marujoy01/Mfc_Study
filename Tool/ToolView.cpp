@@ -176,9 +176,13 @@ void CToolView::OnLButtonDown(UINT nFlags, CPoint point)
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
 
 	CScrollView::OnLButtonDown(nFlags, point);
+
+	CMainFrame*		pMainFrm = dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd());
+	CMyForm*		pMyForm = dynamic_cast<CMyForm*>(pMainFrm->m_SecondSplitter.GetPane(1, 0));
+	CMapTool*		pMapTool = &(pMyForm->m_MapTool);
 	
 	m_pTerrain->Tile_Change(D3DXVECTOR3((float)point.x + GetScrollPos(0), 
-										(float)point.y + GetScrollPos(1), 0.f), 0);
+										(float)point.y + GetScrollPos(1), 0.f), pMapTool->m_iDrawID);
 
 	// Invalidate : 호출 시, 윈도우의 WM_PAINT와 WM_ERASEBKGND 메세지를 발생시킴
 	// FALSE : WM_PAINT 메세지만 발생
@@ -186,7 +190,7 @@ void CToolView::OnLButtonDown(UINT nFlags, CPoint point)
 
 	Invalidate(FALSE);
 
-	CMainFrame*		pMainFrm = dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd());
+	
 	CMiniView*		pMiniView = dynamic_cast<CMiniView*>(pMainFrm->m_SecondSplitter.GetPane(0, 0));
 
 	pMiniView->Invalidate(FALSE);
@@ -200,12 +204,16 @@ void CToolView::OnMouseMove(UINT nFlags, CPoint point)
 
 	if (GetAsyncKeyState(VK_LBUTTON))
 	{
+		CMainFrame*		pMainFrm = dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd());
+		CMyForm*		pMyForm = dynamic_cast<CMyForm*>(pMainFrm->m_SecondSplitter.GetPane(1, 0));
+		CMapTool*		pMapTool = &(pMyForm->m_MapTool);
+
 		m_pTerrain->Tile_Change(D3DXVECTOR3((float)point.x + GetScrollPos(0),
-			(float)point.y + GetScrollPos(1), 0.f), 0);
+			(float)point.y + GetScrollPos(1), 0.f), pMapTool->m_iDrawID);
 
 		Invalidate(FALSE);
 
-		CMainFrame*		pMainFrm = dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd());
+		
 		CMiniView*		pMiniView = dynamic_cast<CMiniView*>(pMainFrm->m_SecondSplitter.GetPane(0, 0));
 
 		pMiniView->Invalidate(FALSE);

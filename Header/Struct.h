@@ -37,7 +37,12 @@ typedef struct tagTile
 
 typedef	struct tagUnitData
 {
-	CString	strName;	
+#ifdef _AFX
+	CString	strName;
+#else
+	wstring	strName;
+#endif
+
 	int		iAttack;
 	int		iHp;
 	BYTE	byJobIndex;

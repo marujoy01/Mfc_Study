@@ -24,8 +24,9 @@ protected:
 public:
 	afx_msg void OnBnClickedButton1();
 	afx_msg void OnListBox();
-	afx_msg void OnCreateUnit();
-	
+	afx_msg void OnCreateUnit();	
+	virtual BOOL OnInitDialog();
+	afx_msg void OnSearchData();
 
 public:
 	// 아무 의미 없는 변수
@@ -40,11 +41,14 @@ public:
 	CButton m_Radio[3];
 	CButton m_Check[3];
 	CButton m_Bitmap;
+	CString m_strFindName;
 
 public:
 	map<CString, UNITDATA*>		m_mapUnitData;
 
-	virtual BOOL OnInitDialog();
+	afx_msg void OnDeleteData();
+	afx_msg void OnSaveData();
+	afx_msg void OnLoadData();
 };
 
 // 저장하기, 불러오기, 삭제하기, 탐색하기(edit control 이용하여 탐색)

@@ -17,6 +17,9 @@ public:
 	void		Release();
 
 public:
+	vector<TILE*>&		Get_VecTile() { return m_vecTile; }
+
+public:
 	void		Set_MainView(CToolView* pView) { m_pMainView = pView;  }
 	void		Set_Ratio(D3DXMATRIX* pOut, float fRatioX, float fRatioY);
 
