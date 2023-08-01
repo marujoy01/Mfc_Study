@@ -22,20 +22,21 @@ HWND	g_hWnd;
 
 // CToolView
 
-IMPLEMENT_DYNCREATE(CToolView, CView)
+IMPLEMENT_DYNCREATE(CToolView, CScrollView)
 
-BEGIN_MESSAGE_MAP(CToolView, CView)
+BEGIN_MESSAGE_MAP(CToolView, CScrollView)
 	// 표준 인쇄 명령입니다.
-	ON_COMMAND(ID_FILE_PRINT, &CView::OnFilePrint)
-	ON_COMMAND(ID_FILE_PRINT_DIRECT, &CView::OnFilePrint)
-	ON_COMMAND(ID_FILE_PRINT_PREVIEW, &CView::OnFilePrintPreview)
+	ON_COMMAND(ID_FILE_PRINT, &CScrollView::OnFilePrint)
+	ON_COMMAND(ID_FILE_PRINT_DIRECT, &CScrollView::OnFilePrint)
+	ON_COMMAND(ID_FILE_PRINT_PREVIEW, &CScrollView::OnFilePrintPreview)
 	ON_WM_DESTROY()
 	ON_WM_LBUTTONDOWN()
+	ON_WM_MOUSEMOVE()
 END_MESSAGE_MAP()
 
 // CToolView 생성/소멸
 
-CToolView::CToolView()
+CToolView::CToolView() : m_pTerrain(nullptr)
 {
 	// TODO: 여기에 생성 코드를 추가합니다.
 
@@ -52,7 +53,7 @@ BOOL CToolView::PreCreateWindow(CREATESTRUCT& cs)
 	// TODO: CREATESTRUCT cs를 수정하여 여기에서
 	//  Window 클래스 또는 스타일을 수정합니다.
 
-	return CView::PreCreateWindow(cs);
+	return CScrollView::PreCreateWindow(cs);
 }
 
 // CToolView 인쇄
@@ -79,12 +80,12 @@ void CToolView::OnEndPrinting(CDC* /*pDC*/, CPrintInfo* /*pInfo*/)
 #ifdef _DEBUG
 void CToolView::AssertValid() const
 {
-	CView::AssertValid();
+	CScrollView::AssertValid();
 }
 
 void CToolView::Dump(CDumpContext& dc) const
 {
-	CView::Dump(dc);
+	CScrollView::Dump(dc);
 }
 
 CToolDoc* CToolView::GetDocument() const // 디버그되지 않은 버전은 인라인으로 지정됩니다.
@@ -102,10 +103,13 @@ CToolDoc* CToolView::GetDocument() const // 디버그되지 않은 버전은 인라인으로 지
 void CToolView::OnInitialUpdate()
 {
 
+
+
+	SetScrollSizes(MM_TEXT, CSize(TILEX * TILECX, TILEY * TILECY / 2));
+
 	// AfxGetMainWnd : 현재 메인 윈도우를 반환하는 전역 함수
 
 	CMainFrame*		pMainFrm = (CMainFrame*)AfxGetMainWnd();
-
 	
 	RECT	rcWnd{};
 
@@ -128,7 +132,7 @@ void CToolView::OnInitialUpdate()
 
 	pMainFrm->SetWindowPos(nullptr, 0, 0, int(WINCX + fRowFrm), int(WINCY + fColFrm), SWP_NOZORDER);
 	
-	CView::OnInitialUpdate();
+	CScrollView::OnInitialUpdate();
 
 	g_hWnd = m_hWnd;
 
@@ -139,9 +143,10 @@ void CToolView::OnInitialUpdate()
 	if (FAILED(CTextureMgr::Get_Instance()->Insert_Texture(L"../Texture/Cube.png", TEX_SINGLE, L"Cube")))
 		AfxMessageBox(L"CUBE IMG FAILED");
 
-	if (FAILED(CTextureMgr::Get_Instance()->Insert_Texture(L"../Texture/Stage/Terrain/Tile/Tile%d.png", TEX_MULTI, L"Terrain", L"Tile", 36)))
-		AfxMessageBox(L"TILE IMG FAILED");
 
+	m_pTerrain = new CTerrain;
+	m_pTerrain->Initialize();
+	m_pTerrain->Set_MainView(this);
 }
 
 void CToolView::OnDraw(CDC* /*pDC*/)
@@ -150,37 +155,19 @@ void CToolView::OnDraw(CDC* /*pDC*/)
 	ASSERT_VALID(pDoc);
 	if (!pDoc)
 		return;
-
-	const TEXINFO*		pTexInfo = CTextureMgr::Get_Instance()->Get_Texture(L"Terrain", L"Tile", 3);
-
-	D3DXMATRIX	matWorld, matScale, matRotZ, matTrans;
-
-	D3DXMatrixIdentity(&matWorld);
-	D3DXMatrixScaling(&matScale, 1.f, 1.f, 1.f);
-	D3DXMatrixRotationZ(&matRotZ, D3DXToRadian(45.f));
-	D3DXMatrixTranslation(&matTrans, 400.f, 300.f, 0.f);
-
-	matWorld = matScale/* * matRotZ*/ * matTrans;
-
-	float		fCenterX = pTexInfo->tImgInfo.Width / 2.f;
-	float		fCenterY = pTexInfo->tImgInfo.Height / 2.f;
-
+	
 	CDevice::Get_Instance()->Render_Begin();
 
-	CDevice::Get_Instance()->Get_Sprite()->SetTransform(&matWorld);
-
-	CDevice::Get_Instance()->Get_Sprite()->Draw(pTexInfo->pTexture,	// 텍스처 객체 주소
-												nullptr, // 출력할 이미지 영역에 대한 렉트 구조체 주소, null인경우 이미지의 0, 0기준으로 출력
-												&D3DXVECTOR3(fCenterX, fCenterY, 0.f), // 출력할 이미지의 중심 축에 대한 vector3 구조체 포인터, nullptr인 경우 0, 0이 중심 좌표
-												nullptr, // 위치 좌표에 따른 vector3 구조체 포인어
-												D3DCOLOR_ARGB(255, 255, 255, 255));	// 출력할 원본 이미지와 섞을 색상 값, 출력 시 섞은 색이 반영, 0xffffffff를 넘겨주면 원본 색상 유지
+	m_pTerrain->Render();
 
 	CDevice::Get_Instance()->Render_End();
 }
 
 void CToolView::OnDestroy()
 {
-	CView::OnDestroy();
+	CScrollView::OnDestroy();
+
+	Safe_Delete(m_pTerrain);
 
 	CTextureMgr::Destroy_Instance();
 	CDevice::Get_Instance()->Destroy_Instance();
@@ -191,7 +178,27 @@ void CToolView::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
 
-	int a = 0;
+	CScrollView::OnLButtonDown(nFlags, point);
+	
+	m_pTerrain->Tile_Change(D3DXVECTOR3((float)point.x + GetScrollPos(0), 
+										(float)point.y + GetScrollPos(1), 0.f), 0);
 
-	CView::OnLButtonDown(nFlags, point);
+	// Invalidate : 호출 시, 윈도우의 WM_PAINT와 WM_ERASEBKGND 메세지를 발생시킴
+	// FALSE : WM_PAINT 메세지만 발생
+	// TRUE : WM_PAINT, WM_ERASEBKGND 메세지를 둘 다 발생
+
+	Invalidate(FALSE);
+}
+
+
+void CToolView::OnMouseMove(UINT nFlags, CPoint point)
+{
+	CScrollView::OnMouseMove(nFlags, point);
+
+	if (GetAsyncKeyState(VK_LBUTTON))
+	{
+		m_pTerrain->Tile_Change(D3DXVECTOR3((float)point.x + GetScrollPos(0),
+			(float)point.y + GetScrollPos(1), 0.f), 0);
+		Invalidate(FALSE);
+	}
 }

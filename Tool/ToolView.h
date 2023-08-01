@@ -7,7 +7,10 @@
 #include "Device.h"
 #include "TextureMgr.h"
 
-class CToolView : public CView
+#include "Terrain.h"
+
+class CToolDoc;
+class CToolView : public CScrollView
 {
 protected: // serialization에서만 만들어집니다.
 	CToolView();
@@ -46,6 +49,11 @@ public:
 	virtual void OnInitialUpdate();
 	afx_msg void OnDestroy();
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+
+public:
+	CTerrain*		m_pTerrain;
+
+	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 };
 
 #ifndef _DEBUG  // ToolView.cpp의 디버그 버전
@@ -53,7 +61,3 @@ inline CToolDoc* CToolView::GetDocument() const
    { return reinterpret_cast<CToolDoc*>(m_pDocument); }
 #endif
 
-// 1. 멀티 텍스처를 이용하여 타일 지형 깔아오기 (쿼터뷰 방식)
-// 2. 마우스 픽킹을 티용하여 마우스 클릭 시 타일 이미지 변경하기
-
-// 직선의 방정식 (y = ax + b) a : 기울기, b : y절편
