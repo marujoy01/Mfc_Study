@@ -1,30 +1,23 @@
 #pragma once
 #include "Obj.h"
-class CPlayer :
-	public CObj
+class CBullet :	public CObj
 {
-public:
-	CPlayer();
-	virtual ~CPlayer();
+private:
+	explicit CBullet();
+	virtual ~CBullet();
 
 public:
-	// CObj을(를) 통해 상속됨
 	virtual HRESULT Initialize(void) override;
 	virtual int Update(void) override;
 	virtual void Late_Update(void) override;
 	virtual void Render(void) override;
 	virtual void Release(void) override;
 
-
-
-private: 
-	void		Move_Route();
-	void		Fire_Bullet();
-
 private:
-	float		m_fFireItv = 0.f;
-	float		m_fFireAngle = 0.f;
-	int			m_iCount = 0;
+	void		Move_Bullet();
 
+public:
+	static CBullet*		Create(const D3DXVECTOR3& vPos, const D3DXVECTOR3& vDir, int& iCnt);
 };
+
 

@@ -20,11 +20,11 @@ HRESULT CStage::Ready_Scene()
 		return E_FAIL;
 	}	*/
 
-	if (FAILED(CTextureMgr::Get_Instance()->ReadImgPath(L"../Data/ImgPath.txt")))
+	/*if (FAILED(CTextureMgr::Get_Instance()->ReadImgPath(L"../Data/ImgPath.txt")))
 	{
 		ERR_MSG(L"ReadImgPath failed");
 		return E_FAIL;
-	}
+	}*/
 
 	CObj*	pObj = new CMyTerrain;
 	
